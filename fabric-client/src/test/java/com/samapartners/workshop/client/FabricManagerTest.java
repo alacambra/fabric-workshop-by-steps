@@ -1,9 +1,6 @@
 package com.samapartners.workshop.client;
 
-import org.hyperledger.fabric.sdk.ChaincodeID;
-import org.hyperledger.fabric.sdk.Channel;
-import org.hyperledger.fabric.sdk.Peer;
-import org.hyperledger.fabric.sdk.ProposalResponse;
+import org.hyperledger.fabric.sdk.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,11 +44,14 @@ public class FabricManagerTest {
     @Test
     public void installChaincode() {
         cut.recreateChannel();
-        ChaincodeID chaincodeID = //TODO create chaincodeId
-        String chaincodeSourceLocation = ; //TODO set source
+        ChaincodeID chaincodeID = ChaincodeID.newBuilder()
+                .setName("hello")
+                .setVersion("3")
+                .build();
+        String chaincodeSourceLocation = "/Users/albertlacambra1/git/fabric-workshop-by-steps/fabric-client/deployment";
         Collection<Peer> peers = cut.getPeers();
         List<ProposalResponse> responses = cut.installChaincode(chaincodeID, chaincodeSourceLocation, peers);
         ProposalResponse response = responses.stream().findAny().get();
-        assertThat(response.getMessage(), response.getStatus(), is()); //TODO set correct status
+        assertThat(response.getMessage(), response.getStatus(), is(ChaincodeResponse.Status.SUCCESS));
     }
 }

@@ -61,13 +61,18 @@ public class FabricManager {
 
     public List<ProposalResponse> installChaincode(ChaincodeID chaincodeID, String chaincodeSourceLocation, Collection<Peer> endorsementPeers) {
 
-        InstallProposalRequest installProposalRequest = //Todo create it;
+        InstallProposalRequest installProposalRequest = hfClient.newInstallProposalRequest();
 
-        //TODO configure proposal. chaincode information, cc language, code to install
+        installProposalRequest.setChaincodeID(chaincodeID);
+        installProposalRequest.setChaincodeLanguage(TransactionRequest.Type.JAVA);
+        try {
+            installProposalRequest.setChaincodeSourceLocation(new File(chaincodeSourceLocation));
+        } catch (InvalidArgumentException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
-            Collection<ProposalResponse> responses = //todo send proposa
-            return new ArrayList<>(responses);
+            return new ArrayList<>(hfClient.sendInstallProposal(installProposalRequest, endorsementPeers));
         } catch (ProposalException | InvalidArgumentException e) {
             throw new RuntimeException(e);
         }

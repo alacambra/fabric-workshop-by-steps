@@ -139,6 +139,11 @@ public class FabricManager {
         }
     }
 
+    private CompletableFuture<BlockInfo> invoke(ChaincodeID chaincodeID, String functionName, String[] args) {
+        //TODO implement
+        return null;
+    }
+
 
     private void initHFClient() {
         try {

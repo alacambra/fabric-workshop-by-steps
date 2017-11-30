@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -79,7 +80,7 @@ public class FabricManager {
         }
     }
 
-    public List<ProposalResponse> instantiateChaincode(ChaincodeID chaincodeID) {
+    public CompletableFuture<BlockInfo> instantiateChaincode(ChaincodeID chaincodeID) {
         try {
 
             InstantiateProposalRequest proposalRequest = hfClient.newInstantiationProposalRequest();
@@ -97,10 +98,10 @@ public class FabricManager {
             try {
                 proposalRequest.setTransientMap(tm);
             } catch (InvalidArgumentException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
 
-            return new ArrayList<>(channel.sendInstantiationProposal(proposalRequest, peers));
+            //TODO change it to send to orderer.
 
         } catch (ProposalException | InvalidArgumentException e) {
             throw new RuntimeException(e);
@@ -225,6 +226,11 @@ public class FabricManager {
         }
 
         return orderers;
+    }
+
+    private CompletableFuture<BlockInfo> sendTransactionToOrderer(ProposalResponse proposalsResult) {
+        //TODO: send to orderer and confirm
+        return null;
     }
 
     public Channel getChannel() {

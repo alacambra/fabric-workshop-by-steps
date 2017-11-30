@@ -110,9 +110,10 @@ public class FabricManager {
     public String query(ChaincodeID chaincodeID, String functionName, String[] args) {
 
         QueryByChaincodeRequest queryByChaincodeRequest = hfClient.newQueryProposalRequest();
-        queryByChaincodeRequest.setArgs(new String[]{"arg"});
-        queryByChaincodeRequest.setFcn("test");
+        queryByChaincodeRequest.setArgs(args);
+        queryByChaincodeRequest.setFcn(functionName);
         queryByChaincodeRequest.setChaincodeID(chaincodeID);
+
         try {
             List<ProposalResponse> proposalResponses = new ArrayList<>(channel.queryByChaincode(queryByChaincodeRequest));
 

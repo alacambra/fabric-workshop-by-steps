@@ -12,6 +12,7 @@ import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -30,50 +31,6 @@ public class FabricManager {
     public FabricManager() {
         hfClient = HFClient.createNewInstance();
         initHFClient();
-    }
-
-    private void initHFClient() {
-        try {
-            hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-            hfClient.setUserContext(getUserConext());
-        } catch (CryptoException | InvalidArgumentException e) {
-            e.printStackTrace();
-        }
-
-        eventHubs = initEventHubs();
-        orderers = initOrderers();
-        peers = initPeers();
-    }
-
-    private SampleUser getUserConext() {
-
-        String organizationName = "org1";
-        String organizationMspId = "Org1MSP";
-        String username = "Admin";
-
-        SampleUser sampleUser = new SampleUser(username, organizationName, SampleStore.load());
-        sampleUser.setMPSID(organizationMspId);
-        Enrollment enrollment = new WorkshopEnrollment();
-        sampleUser.setEnrollment(enrollment);
-        return sampleUser;
-    }
-
-    public List<EventHub> initEventHubs() {
-
-        List<EventHub> eventHubs = new ArrayList<>();
-        String evenHubUrl = "grpc://" + HOST + ":7053";
-        String eventHubName = "peer0.eventhub.org1.example.com";
-        Properties properties = new Properties();
-        properties.put("grpc.NettyChannelBuilderOption.keepAliveTime", new Object[]{5L, TimeUnit.MINUTES});
-        properties.put("grpc.NettyChannelBuilderOption.keepAliveTimeout", new Object[]{8L, TimeUnit.SECONDS});
-
-        try {
-            eventHubs.add(hfClient.newEventHub(eventHubName, evenHubUrl, properties));
-        } catch (InvalidArgumentException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-
-        return eventHubs;
     }
 
     public void createChannel() {
@@ -102,6 +59,66 @@ public class FabricManager {
         }
     }
 
+    public List<ProposalResponse> installChaincode(ChaincodeID chaincodeID, String chaincodeSourceLocation, Collection<Peer> endorsementPeers) {
+
+        InstallProposalRequest installProposalRequest = //Todo create it;
+
+        //TODO configure proposal. chaincode information, cc language, code to install
+
+        try {
+            Collection<ProposalResponse> responses = //todo send proposa
+            return new ArrayList<>(responses);
+        } catch (ProposalException | InvalidArgumentException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    private void initHFClient() {
+        try {
+            hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
+            hfClient.setUserContext(getUserConext());
+        } catch (CryptoException | InvalidArgumentException e) {
+            e.printStackTrace();
+        }
+
+        eventHubs = initEventHubs();
+        orderers = initOrderers();
+        peers = initPeers();
+    }
+
+    private SampleUser getUserConext() {
+
+        String organizationName = "org1";
+        String organizationMspId = "Org1MSP";
+        String username = "Admin";
+
+        SampleUser sampleUser = new SampleUser(username, organizationName, SampleStore.load());
+        sampleUser.setMPSID(organizationMspId);
+        Enrollment enrollment = new WorkshopEnrollment();
+        sampleUser.setEnrollment(enrollment);
+        return sampleUser;
+    }
+
+    private List<EventHub> initEventHubs() {
+
+        List<EventHub> eventHubs = new ArrayList<>();
+        String evenHubUrl = "grpc://" + HOST + ":7053";
+        String eventHubName = "peer0.eventhub.org1.example.com";
+        Properties properties = new Properties();
+        properties.put("grpc.NettyChannelBuilderOption.keepAliveTime", new Object[]{5L, TimeUnit.MINUTES});
+        properties.put("grpc.NettyChannelBuilderOption.keepAliveTimeout", new Object[]{8L, TimeUnit.SECONDS});
+
+        try {
+            eventHubs.add(hfClient.newEventHub(eventHubName, evenHubUrl, properties));
+        } catch (InvalidArgumentException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+
+        return eventHubs;
+    }
+
     private void initChannel() {
         try {
             channel.addOrderer(orderers.get(0));
@@ -112,7 +129,7 @@ public class FabricManager {
         }
     }
 
-    public List<Peer> initPeers() {
+    private List<Peer> initPeers() {
 
         Properties properties = new Properties();
         String peerUrl = "grpc://" + HOST + ":7051";
@@ -130,7 +147,7 @@ public class FabricManager {
         return peers;
     }
 
-    public List<Orderer> initOrderers() {
+    private List<Orderer> initOrderers() {
 
         String ordererUrl = "grpc://" + HOST + ":7050";
 
@@ -153,5 +170,9 @@ public class FabricManager {
 
     public Channel getChannel() {
         return channel;
+    }
+
+    public List<Peer> getPeers() {
+        return peers;
     }
 }

@@ -11,11 +11,10 @@ import org.hyperledger.fabric.sdk.security.CryptoSuite;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class FabricManager {
 
@@ -76,7 +75,31 @@ public class FabricManager {
         } catch (ProposalException | InvalidArgumentException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public List<ProposalResponse> instantiateChaincode(ChaincodeID chaincodeID) {
+        try {
+
+            InstantiateProposalRequest proposalRequest = hfClient.newInstantiationProposalRequest();
+
+            //TODO prepare proposal
+
+            Map<String, byte[]> tm = new HashMap<>();
+            tm.put("HyperLedgerFabric", "InstantiateProposalRequest:JavaSDK".getBytes(UTF_8));
+            tm.put("method", "InstantiateProposalRequest".getBytes(UTF_8));
+
+            try {
+                proposalRequest.setTransientMap(tm);
+            } catch (InvalidArgumentException e) {
+                throw new RuntimeException(e);
+            }
+
+            Collection<ProposalResponse> responses = //TODO send it;
+            return new ArrayList<>(responses);
+
+        } catch (ProposalException | InvalidArgumentException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

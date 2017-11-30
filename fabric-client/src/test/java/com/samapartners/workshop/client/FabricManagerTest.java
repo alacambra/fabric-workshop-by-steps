@@ -54,4 +54,13 @@ public class FabricManagerTest {
         ProposalResponse response = responses.stream().findAny().get();
         assertThat(response.getMessage(), response.getStatus(), is(ChaincodeResponse.Status.SUCCESS));
     }
+
+    @Test
+    public void instantiateChaincode() {
+        cut.recreateChannel();
+        ChaincodeID chaincodeID = null;//TODO
+        List<ProposalResponse> responses = cut.instantiateChaincode(chaincodeID);
+        ProposalResponse response = responses.stream().findAny().get();
+        assertThat(response.getMessage(), response.getStatus(), is(ChaincodeResponse.Status.SUCCESS));
+    }
 }

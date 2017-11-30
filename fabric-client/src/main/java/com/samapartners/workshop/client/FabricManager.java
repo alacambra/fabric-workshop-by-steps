@@ -75,15 +75,15 @@ public class FabricManager {
         return eventHubs;
     }
 
-    private void createChannel(HFClient hfClient, Orderer orderer, Peer peer) {
+    public void createChannel() {
         String channelName = "mychannel";
         String path = "C:/Users/alacambra.SAMA/git/go/work/src/github.com/hyperledger/fabric/examples/e2e_cli/channel-artifacts/channel.tx";
         Channel channel;
 
         try {
             ChannelConfiguration channelConfiguration = new ChannelConfiguration(new File(path));
-            channel =; //TODO create channel
-            channel.joinPeer(peer);
+            channel = hfClient.newChannel(channelName, orderers.get(0), channelConfiguration, hfClient.getChannelConfigurationSignature(channelConfiguration, hfClient.getUserContext()));
+            channel.joinPeer(peers.get(0));
         } catch (IOException | ProposalException | InvalidArgumentException | TransactionException e) {
             throw new RuntimeException(e);
         }
@@ -95,7 +95,7 @@ public class FabricManager {
 
         Channel channel = null;
         try {
-            channel =; //TODO: init channel
+            channel = hfClient.newChannel(channelName);
         } catch (InvalidArgumentException e) {
             throw new RuntimeException(e);
         }

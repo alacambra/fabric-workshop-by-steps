@@ -5,8 +5,12 @@ import com.samapartners.workshop.sample.SampleUser;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.CryptoException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
+import org.hyperledger.fabric.sdk.exception.ProposalException;
+import org.hyperledger.fabric.sdk.exception.TransactionException;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -20,6 +24,7 @@ public class FabricManager {
     private List<Peer> peers;
     private List<Orderer> orderers;
     private List<EventHub> eventHubs;
+    private Channel channel;
 
     public FabricManager() {
         hfClient = HFClient.createNewInstance();
@@ -34,9 +39,9 @@ public class FabricManager {
             e.printStackTrace();
         }
 
-        initEventHubs();
-        initOrderers();
-        initPeers();
+        eventHubs = initEventHubs();
+        orderers = initOrderers();
+        peers = initPeers();
     }
 
     private SampleUser getUserConext() {
@@ -68,6 +73,32 @@ public class FabricManager {
         }
 
         return eventHubs;
+    }
+
+    private void createChannel(HFClient hfClient, Orderer orderer, Peer peer) {
+        String channelName = "mychannel";
+        String path = "C:/Users/alacambra.SAMA/git/go/work/src/github.com/hyperledger/fabric/examples/e2e_cli/channel-artifacts/channel.tx";
+        Channel channel;
+
+        try {
+            ChannelConfiguration channelConfiguration = new ChannelConfiguration(new File(path));
+            channel =; //TODO create channel
+            channel.joinPeer(peer);
+        } catch (IOException | ProposalException | InvalidArgumentException | TransactionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void initChannel() {
+
+        String channelName = "mychannel";
+
+        Channel channel = null;
+        try {
+            channel =; //TODO: init channel
+        } catch (InvalidArgumentException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<Peer> initPeers() {

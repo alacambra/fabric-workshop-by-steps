@@ -26,13 +26,13 @@ public class FabricManager {
     private void initHFClient() {
         try {
             hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-            //todo Set enrolled user
+            hfClient.setUserContext(getUserConext());
         } catch (CryptoException | InvalidArgumentException e) {
             e.printStackTrace();
         }
     }
 
-    private SampleUser getWorkshopEnrollment() {
+    private SampleUser getUserConext() {
 
         String organizationName = "org1";
         String organizationMspId = "Org1MSP";

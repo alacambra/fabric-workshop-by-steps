@@ -14,10 +14,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class FabricManagerTest {
 
     FabricManager cut;
+    private ChaincodeID chaincodeID;
 
     @Before
     public void setUp() throws Exception {
         cut = new FabricManager();
+        chaincodeID = ChaincodeID.newBuilder()
+                .setName("hello")
+                .setVersion("5")
+                .build();
     }
 
     @Test
@@ -44,10 +49,6 @@ public class FabricManagerTest {
     @Test
     public void installChaincode() {
         cut.recreateChannel();
-        ChaincodeID chaincodeID = ChaincodeID.newBuilder()
-                .setName("hello")
-                .setVersion("5")
-                .build();
         String chaincodeSourceLocation = "/Users/albertlacambra1/git/fabric-workshop-by-steps/fabric-client/deployment";
         Collection<Peer> peers = cut.getPeers();
         List<ProposalResponse> responses = cut.installChaincode(chaincodeID, chaincodeSourceLocation, peers);
@@ -58,13 +59,15 @@ public class FabricManagerTest {
     @Test
     public void instantiateChaincode() {
         cut.recreateChannel();
-        ChaincodeID chaincodeID = ChaincodeID.newBuilder()
-                .setName("hello")
-                .setVersion("5")
-                .build();
-
         List<ProposalResponse> responses = cut.instantiateChaincode(chaincodeID);
         ProposalResponse response = responses.stream().findAny().get();
         assertThat(response.getMessage(), response.getStatus(), is(ChaincodeResponse.Status.SUCCESS));
+    }
+
+    @Test
+    public void testQuery() {
+        cut.recreateChannel();
+        String response = cut.query(chaincodeID, "functionName", new String[]{""});
+        assertThat(response, is("Hello world!"));
     }
 }

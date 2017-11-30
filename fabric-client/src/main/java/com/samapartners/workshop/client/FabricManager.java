@@ -106,6 +106,12 @@ public class FabricManager {
         }
     }
 
+    public String query(ChaincodeID chaincodeID, String functionName, String[] args) {
+
+        //TODO: implement it
+        return "";
+    }
+
 
     private void initHFClient() {
         try {

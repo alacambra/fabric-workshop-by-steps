@@ -16,7 +16,7 @@ public class HelloWorldChaincode extends ChaincodeBase {
 
     @Override
     public Response invoke(ChaincodeStub chaincodeStub) {
-        return newSuccessResponse("Hello world", "all Ok".getBytes());
+        return newSuccessResponse("Hello world", "Hello world!".getBytes());
     }
 
     public static void main(String[] args) {

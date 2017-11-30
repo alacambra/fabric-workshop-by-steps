@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FabricManager {
 
-    private static final String HOST = "192.168.99.100"; //TODO: set url
+    private static final String HOST = "192.168.99.100";
 
     private final HFClient hfClient;
     private List<Peer> peers;

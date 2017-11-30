@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class FabricManager {
 
     private static final String HOST = "192.168.99.100";
+    private static final String CHANNEL_PATH = "/Users/albertlacambra1/Downloads/scripts/channel-artifacts/";
 
     private final HFClient hfClient;
     private List<Peer> peers;
@@ -77,27 +78,37 @@ public class FabricManager {
 
     public void createChannel() {
         String channelName = "mychannel";
-        String path = "C:/Users/alacambra.SAMA/git/go/work/src/github.com/hyperledger/fabric/examples/e2e_cli/channel-artifacts/channel.tx";
-        Channel channel;
+        String path = CHANNEL_PATH + "channel.tx";
 
         try {
             ChannelConfiguration channelConfiguration = new ChannelConfiguration(new File(path));
             channel = hfClient.newChannel(channelName, orderers.get(0), channelConfiguration, hfClient.getChannelConfigurationSignature(channelConfiguration, hfClient.getUserContext()));
             channel.joinPeer(peers.get(0));
+            initChannel();
         } catch (IOException | ProposalException | InvalidArgumentException | TransactionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void initChannel() {
+    public void recreateChannel() {
 
         String channelName = "mychannel";
 
-        Channel channel = null;
         try {
             channel = hfClient.newChannel(channelName);
+            initChannel();
         } catch (InvalidArgumentException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void initChannel() {
+        try {
+            channel.addOrderer(orderers.get(0));
+            channel.addEventHub(eventHubs.get(0));
+            channel.initialize();
+        } catch (InvalidArgumentException | TransactionException e) {
+            e.printStackTrace();
         }
     }
 
@@ -138,5 +149,9 @@ public class FabricManager {
         }
 
         return orderers;
+    }
+
+    public Channel getChannel() {
+        return channel;
     }
 }

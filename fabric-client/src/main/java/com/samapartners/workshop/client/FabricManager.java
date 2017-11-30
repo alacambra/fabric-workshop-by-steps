@@ -7,17 +7,6 @@ import org.hyperledger.fabric.sdk.exception.CryptoException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
 
-import java.util.List;
-
-public class FabricManager {
-
-    private static final String HOST = "192.168.99.100"; //TODO: set url
-import org.hyperledger.fabric.sdk.EventHub;
-import org.hyperledger.fabric.sdk.HFClient;
-import org.hyperledger.fabric.sdk.Orderer;
-import org.hyperledger.fabric.sdk.Peer;
-import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -25,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FabricManager {
 
-    private static final String HOST = ; //TODO: set url
+    private static final String HOST = "192.168.99.100"; //TODO: set url
 
     private final HFClient hfClient;
     private List<Peer> peers;

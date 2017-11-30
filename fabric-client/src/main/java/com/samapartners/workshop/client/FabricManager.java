@@ -11,6 +11,7 @@ import org.hyperledger.fabric.sdk.security.CryptoSuite;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -108,8 +109,27 @@ public class FabricManager {
 
     public String query(ChaincodeID chaincodeID, String functionName, String[] args) {
 
-        //TODO: implement it
-        return "";
+        QueryByChaincodeRequest queryByChaincodeRequest = hfClient.newQueryProposalRequest();
+        queryByChaincodeRequest.setArgs(new String[]{"arg"});
+        queryByChaincodeRequest.setFcn("test");
+        queryByChaincodeRequest.setChaincodeID(chaincodeID);
+        try {
+            List<ProposalResponse> proposalResponses = new ArrayList<>(channel.queryByChaincode(queryByChaincodeRequest));
+
+            ProposalResponse response = proposalResponses.get(0);
+            if (response.getStatus() != ChaincodeResponse.Status.SUCCESS) {
+                System.err.println(response.getMessage());
+                return "error";
+            }
+
+            return proposalResponses.get(0)
+                    .getProposalResponse()
+                    .getResponse()
+                    .getPayload()
+                    .toString("UTF-8");
+        } catch (InvalidArgumentException | ProposalException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

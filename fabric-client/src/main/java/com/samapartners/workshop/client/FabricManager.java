@@ -52,6 +52,7 @@ public class FabricManager {
 
         try {
             channel = hfClient.newChannel(channelName);
+            channel.addPeer(peers.get(0));
             initChannel();
         } catch (InvalidArgumentException e) {
             throw new RuntimeException(e);
@@ -82,7 +83,11 @@ public class FabricManager {
 
             InstantiateProposalRequest proposalRequest = hfClient.newInstantiationProposalRequest();
 
-            //TODO prepare proposal
+            proposalRequest.setChaincodeID(chaincodeID);
+            proposalRequest.setFcn("init");
+            proposalRequest.setChaincodeLanguage(TransactionRequest.Type.JAVA);
+            proposalRequest.setArgs(new ArrayList<>(0));
+            proposalRequest.setUserContext(hfClient.getUserContext());
 
             Map<String, byte[]> tm = new HashMap<>();
             tm.put("HyperLedgerFabric", "InstantiateProposalRequest:JavaSDK".getBytes(UTF_8));
@@ -91,11 +96,10 @@ public class FabricManager {
             try {
                 proposalRequest.setTransientMap(tm);
             } catch (InvalidArgumentException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
 
-            Collection<ProposalResponse> responses = //TODO send it;
-            return new ArrayList<>(responses);
+            return new ArrayList<>(channel.sendInstantiationProposal(proposalRequest, peers));
 
         } catch (ProposalException | InvalidArgumentException e) {
             throw new RuntimeException(e);

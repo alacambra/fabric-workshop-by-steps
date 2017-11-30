@@ -1,4 +1,4 @@
-package com.samapartners.workshop.chaincode;
+package com.samapartners.workshop.client;
 
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;

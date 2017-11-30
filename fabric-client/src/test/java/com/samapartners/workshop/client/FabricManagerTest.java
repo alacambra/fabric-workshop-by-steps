@@ -46,7 +46,7 @@ public class FabricManagerTest {
         cut.recreateChannel();
         ChaincodeID chaincodeID = ChaincodeID.newBuilder()
                 .setName("hello")
-                .setVersion("3")
+                .setVersion("5")
                 .build();
         String chaincodeSourceLocation = "/Users/albertlacambra1/git/fabric-workshop-by-steps/fabric-client/deployment";
         Collection<Peer> peers = cut.getPeers();
@@ -58,7 +58,11 @@ public class FabricManagerTest {
     @Test
     public void instantiateChaincode() {
         cut.recreateChannel();
-        ChaincodeID chaincodeID = null;//TODO
+        ChaincodeID chaincodeID = ChaincodeID.newBuilder()
+                .setName("hello")
+                .setVersion("5")
+                .build();
+
         List<ProposalResponse> responses = cut.instantiateChaincode(chaincodeID);
         ProposalResponse response = responses.stream().findAny().get();
         assertThat(response.getMessage(), response.getStatus(), is(ChaincodeResponse.Status.SUCCESS));

@@ -56,13 +56,13 @@ public class FabricManager {
 
         List<EventHub> eventHubs = new ArrayList<>();
         String evenHubUrl = "grpc://" + HOST + ":7053";
-        String eventHub = "peer0.eventhub.org1.example.com";
+        String eventHubName = "peer0.eventhub.org1.example.com";
         Properties properties = new Properties();
         properties.put("grpc.NettyChannelBuilderOption.keepAliveTime", new Object[]{5L, TimeUnit.MINUTES});
         properties.put("grpc.NettyChannelBuilderOption.keepAliveTimeout", new Object[]{8L, TimeUnit.SECONDS});
 
         try {
-            eventHubs.add(); //TODO: Init here
+            eventHubs.add(hfClient.newEventHub(eventHubName, evenHubUrl, properties));
         } catch (InvalidArgumentException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -81,7 +81,7 @@ public class FabricManager {
         properties.put("grpc.NettyChannelBuilderOption.keepAliveTimeout", new Object[]{8L, TimeUnit.SECONDS});
 
         try {
-            peers.add(); //TODO: init here
+            peers.add(hfClient.newPeer(peerName, peerUrl, properties));
         } catch (InvalidArgumentException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -98,9 +98,10 @@ public class FabricManager {
         ordererProperties.setProperty("hostnameOverride", "orderer.example.com");
         ordererProperties.put("grpc.NettyChannelBuilderOption.keepAliveTime", new Object[]{5L, TimeUnit.MINUTES});
         ordererProperties.put("grpc.NettyChannelBuilderOption.keepAliveTimeout", new Object[]{8L, TimeUnit.SECONDS});
+        String ordererName = "orderer.example.com";
 
         try {
-            orderers.add();                 //TODO: initialize here
+            orderers.add(hfClient.newOrderer(ordererName, ordererUrl, ordererProperties));
         } catch (InvalidArgumentException ex) {
             throw new IllegalArgumentException(ex);
         }

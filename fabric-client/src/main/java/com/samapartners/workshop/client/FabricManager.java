@@ -140,7 +140,20 @@ public class FabricManager {
     }
 
     private CompletableFuture<BlockInfo> invoke(ChaincodeID chaincodeID, String functionName, String[] args) {
+        TransactionProposalRequest transactionProposalRequest = hfClient.newTransactionProposalRequest();
         //TODO implement
+        Map<String, byte[]> transientProposalData = new HashMap<>();
+        transientProposalData.put("HyperLedgerFabric", "TransactionProposalRequest:JavaSDK".getBytes(UTF_8));
+        transientProposalData.put("method", "TransactionProposalRequest".getBytes(UTF_8));
+        transientProposalData.put("result", ":)".getBytes(UTF_8));
+
+        try {
+            transactionProposalRequest.setTransientMap(transientProposalData);
+            //TODO implement
+        } catch (InvalidArgumentException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+
         return null;
     }
 

@@ -1,6 +1,9 @@
 package com.samapartners.workshop.client;
 
-import org.hyperledger.fabric.sdk.*;
+import org.hyperledger.fabric.sdk.EventHub;
+import org.hyperledger.fabric.sdk.HFClient;
+import org.hyperledger.fabric.sdk.Orderer;
+import org.hyperledger.fabric.sdk.Peer;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 
 import java.util.ArrayList;
@@ -10,30 +13,18 @@ import java.util.concurrent.TimeUnit;
 
 public class FabricManager {
 
-    private static final String HOST = "";
+    private static final String HOST = ; //TODO: set url
 
     private final HFClient hfClient;
-    private Channel channel;
     private List<Peer> peers;
     private List<Orderer> orderers;
     private List<EventHub> eventHubs;
 
     public FabricManager() {
-        hfClient = null; //TODO: init here
-    }
-
-    public Channel initChannel(HFClient hfClient) {
-
-        String channelName = "mychannel";
-
-        Channel channel = null;
-        try {
-            channel = hfClient.newChannel(channelName);
-        } catch (InvalidArgumentException e) {
-            throw new RuntimeException(e);
-        }
-
-        return channel;
+        hfClient =  ;  //TODO: init here
+        initEventHubs();
+        initOrderers();
+        initPeers();
     }
 
     public List<EventHub> initEventHubs() {
@@ -46,7 +37,7 @@ public class FabricManager {
         properties.put("grpc.NettyChannelBuilderOption.keepAliveTimeout", new Object[]{8L, TimeUnit.SECONDS});
 
         try {
-            eventHubs.add(); //Init here
+            eventHubs.add(); //TODO: Init here
         } catch (InvalidArgumentException ex) {
             throw new IllegalArgumentException(ex);
         }

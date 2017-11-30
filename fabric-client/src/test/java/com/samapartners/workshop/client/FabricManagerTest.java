@@ -1,11 +1,13 @@
 package com.samapartners.workshop.client;
 
+import org.hamcrest.Matchers;
 import org.hyperledger.fabric.sdk.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -20,8 +22,8 @@ public class FabricManagerTest {
     public void setUp() throws Exception {
         cut = new FabricManager();
         chaincodeID = ChaincodeID.newBuilder()
-                .setName("hello")
-                .setVersion("5")
+                .setName("hello1")
+                .setVersion("6")
                 .build();
     }
 
@@ -57,11 +59,10 @@ public class FabricManagerTest {
     }
 
     @Test
-    public void instantiateChaincode() {
+    public void instantiateChaincode() throws ExecutionException, InterruptedException {
         cut.recreateChannel();
-        List<ProposalResponse> responses = cut.instantiateChaincode(chaincodeID);
-        ProposalResponse response = responses.stream().findAny().get();
-        assertThat(response.getMessage(), response.getStatus(), is(ChaincodeResponse.Status.SUCCESS));
+        BlockInfo blockInfo = cut.instantiateChaincode(chaincodeID).get();
+        assertThat(blockInfo.getBlockNumber(), Matchers.greaterThan(0L));
     }
 
     @Test

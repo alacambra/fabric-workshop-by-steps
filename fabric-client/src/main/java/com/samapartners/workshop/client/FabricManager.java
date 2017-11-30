@@ -101,7 +101,12 @@ public class FabricManager {
                 throw new RuntimeException(e);
             }
 
-            //TODO change it to send to orderer.
+            ProposalResponse response = new ArrayList<>(channel.sendInstantiationProposal(proposalRequest, peers)).get(0);
+            if (response.getStatus() == ChaincodeResponse.Status.SUCCESS) {
+                return sendTransactionToOrderer(response);
+            }
+
+            throw new RuntimeException(response.getMessage());
 
         } catch (ProposalException | InvalidArgumentException e) {
             throw new RuntimeException(e);
@@ -229,8 +234,15 @@ public class FabricManager {
     }
 
     private CompletableFuture<BlockInfo> sendTransactionToOrderer(ProposalResponse proposalsResult) {
-        //TODO: send to orderer and confirm
-        return null;
+        return channel.sendTransaction(Collections.singletonList(proposalsResult), orderers)
+                .thenApply(transactionEvent -> {
+                    String transactionId = transactionEvent.getTransactionID();
+                    try {
+                        return channel.queryBlockByTransactionID(transactionId);
+                    } catch (ProposalException | InvalidArgumentException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     public Channel getChannel() {

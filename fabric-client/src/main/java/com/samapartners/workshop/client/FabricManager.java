@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class FabricManager {
@@ -139,9 +140,12 @@ public class FabricManager {
         }
     }
 
-    private CompletableFuture<BlockInfo> invoke(ChaincodeID chaincodeID, String functionName, String[] args) {
+    public CompletableFuture<BlockInfo> invoke(ChaincodeID chaincodeID, String functionName, String[] args) {
         TransactionProposalRequest transactionProposalRequest = hfClient.newTransactionProposalRequest();
-        //TODO implement
+        transactionProposalRequest.setChaincodeID(chaincodeID);
+        transactionProposalRequest.setFcn(functionName);
+        transactionProposalRequest.setArgs(args);
+
         Map<String, byte[]> transientProposalData = new HashMap<>();
         transientProposalData.put("HyperLedgerFabric", "TransactionProposalRequest:JavaSDK".getBytes(UTF_8));
         transientProposalData.put("method", "TransactionProposalRequest".getBytes(UTF_8));
@@ -149,12 +153,29 @@ public class FabricManager {
 
         try {
             transactionProposalRequest.setTransientMap(transientProposalData);
-            //TODO implement
+            List<ProposalResponse> transactionPropResp = new ArrayList<>(
+                    channel.sendTransactionProposal(transactionProposalRequest, channel.getPeers())
+            );
+
+            ProposalResponse proposalResponse = transactionPropResp.get(0);
+
+            if (proposalResponse.getStatus() != ChaincodeResponse.Status.SUCCESS) {
+                System.out.println("Error: " + proposalResponse.getMessage());
+                return null;
+            }
+
+            Collection<Set<ProposalResponse>> invokeTRProposalConsistencySets = SDKUtils.getProposalConsistencySets(transactionPropResp);
+
+            if (invokeTRProposalConsistencySets.size() != 1) {
+                throw new RuntimeException(format("Expected only one set of consistent proposal responses but got %d", invokeTRProposalConsistencySets.size()));
+            }
+            return sendTransactionToOrderer(proposalResponse);
+
         } catch (InvalidArgumentException ex) {
             throw new IllegalArgumentException(ex);
+        } catch (ProposalException e) {
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 
 

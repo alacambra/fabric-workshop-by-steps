@@ -5,6 +5,7 @@ import org.hyperledger.fabric.sdk.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.json.Json;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -22,8 +23,8 @@ public class FabricManagerTest {
     public void setUp() throws Exception {
         cut = new FabricManager();
         chaincodeID = ChaincodeID.newBuilder()
-                .setName("hello1")
-                .setVersion("6")
+                .setName("hello")
+                .setVersion("1")
                 .build();
     }
 
@@ -70,5 +71,15 @@ public class FabricManagerTest {
         cut.recreateChannel();
         String response = cut.query(chaincodeID, "functionName", new String[]{""});
         assertThat(response, is("Hello world!"));
+    }
+
+    @Test
+    public void testInvoke() throws ExecutionException, InterruptedException {
+        cut.recreateChannel();
+        String value = "helloooo";
+        BlockInfo blockInfo = cut.invoke(chaincodeID, "put", new String[]{value}).get();
+        assertThat(blockInfo.getBlockNumber(), Matchers.greaterThan(0L));
+        String response = cut.query(chaincodeID, "get", new String[]{});
+        assertThat(response, is(Json.createObjectBuilder().add("value", value).build().toString()));
     }
 }
